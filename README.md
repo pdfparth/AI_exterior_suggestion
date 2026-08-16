@@ -163,28 +163,121 @@ failure modes actually observed:
 
 ---
 
-## Running it
+## Setup
+
+### Prerequisites
+
+- **Python 3.10 or newer** (developed on 3.12). Check with `python3 --version`.
+- A **Gemini API key** — free from https://aistudio.google.com/apikey
+- No GPU, no model downloads, no database. Install is ~350MB and takes a minute
+  or two.
+
+On a bare Debian/Ubuntu box you may also need the venv module:
+
+```bash
+sudo apt install python3-venv
+```
+
+### 1. Create a virtual environment
 
 ```bash
 cd house_outer_modification
-
 python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
-
-cp .env.example .env
-# edit .env and paste your key from https://aistudio.google.com/apikey
-
-./venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
-Open **http://localhost:8000** and click one of the sample photos.
+### 2. Install dependencies
 
-Offline tests (no API key needed) — verifies the estimation math by hand-checkable
-arithmetic:
+```bash
+./venv/bin/pip install -r requirements.txt
+```
+
+<details>
+<summary>Or activate the venv first, if you prefer <code>python</code> over <code>./venv/bin/python</code></summary>
+
+```bash
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Every `./venv/bin/…` command below then becomes plain `python` / `pip`.
+</details>
+
+### 3. Add your API key
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and paste your key:
+
+```
+GEMINI_API_KEY=AIza...your_actual_key...
+```
+
+The key is read at startup. `.env` is gitignored, so it will not be committed.
+
+### 4. Check the install (no API key needed)
 
 ```bash
 ./venv/bin/python test_offline.py
 ```
+
+Expect **`ALL CHECKS PASSED`** — 22 checks covering the area maths, opening
+deduction, paint/tile/railing quantity rules, rate overrides, the local
+compositor and the PDF. This exercises everything except the Gemini calls, so
+it passes even with no key and no network.
+
+### 5. Run the server
+
+```bash
+./venv/bin/python -m uvicorn app.main:app --reload --port 8000
+```
+
+Open **http://localhost:8000**.
+
+The header should read *"Gemini connected"*. If it shows a red key warning, the
+`.env` file was not picked up — confirm it sits next to `README.md` and restart.
+
+### 6. Walk through it
+
+1. Click a sample photo (or drop your own house exterior).
+2. Wait ~10–20s — the photo is quality-checked, then surveyed for surfaces and scale.
+3. **Check the facade dimensions** in the scale panel and correct them if they
+   look wrong. Everything is priced off those two numbers.
+4. Pick materials per component.
+5. **Generate redesign.** Leave the engine on *Auto*; select *Local only* for an
+   instant, quota-free render.
+6. Adjust rates if you want, then **Download PDF report**.
+
+### Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| Header shows a red key warning | `.env` missing or misnamed. It must be `.env` in the project root, and the server must be restarted after creating it. |
+| `429` / "quota exceeded" on redesign | Free-tier image generation is limited. *Auto* falls back to a local render automatically; or select *Local only*, wait for the stated retry delay, or enable billing. |
+| `503` / "temporarily overloaded" | Google-side spike. The client already retries with backoff — just try again, or pin a different model via `GEMINI_VISION_MODEL` in `.env`. |
+| "No usable Gemini model" | Every candidate model was rejected for your key. Set `GEMINI_VISION_MODEL` / `GEMINI_IMAGE_MODEL` in `.env` to a model you have access to. |
+| Photo rejected at upload | Working as intended (5.1). The message says what is wrong; use a clearer, less obstructed shot of the facade. |
+| `ModuleNotFoundError: app` | Run uvicorn from the project root, not from inside `app/`. |
+| Port already in use | `--port 8001`, or stop the process using 8000. |
+
+---
+
+## Environment variables
+
+Only the first is required.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `GEMINI_API_KEY` | — | **Required.** From https://aistudio.google.com/apikey |
+| `GEMINI_VISION_MODEL` | `gemini-2.5-flash` | Perception model. Only set this if the default is unavailable on your key. |
+| `GEMINI_IMAGE_MODEL` | `gemini-2.5-flash-image` | Redesign model. Same caveat. |
+
+Model ids drift between API versions and tiers, so the app does not trust one
+hard-coded name: if the configured model is rejected it walks a fallback list,
+caches whichever works, and prints it (`[vision] using …`). A 503 retries the
+same model with backoff instead of falling back; a 429 stops immediately rather
+than burning the remaining quota.
 
 ---
 

@@ -1,0 +1,212 @@
+/* Plain CSS, no framework. The brief said keep the frontend simple, so this is
+   a readable stylesheet rather than a design system. */
+
+:root {
+  --ink: #1c1c1c;
+  --muted: #6d6d6d;
+  --line: #e0dedb;
+  --bg: #faf9f7;
+  --panel: #fff;
+  --accent: #2f5d50;
+  --accent-soft: #eaf2ef;
+  --warn: #8a5a00;
+  --warn-soft: #fdf4e3;
+  --err: #a32b1c;
+  --err-soft: #fdeceb;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+header h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+.sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.health { margin-top: 10px; font-size: 12px; }
+
+main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+
+/* --- stages --------------------------------------------------------- */
+
+.stage {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 20px;
+}
+.stage-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+.stage-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: grid; place-items: center;
+  font-size: 12px; font-weight: 700; flex: none;
+}
+.hidden { display: none !important; }
+
+/* --- upload --------------------------------------------------------- */
+
+.drop {
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 34px 20px;
+  text-align: center;
+  transition: .15s;
+  cursor: pointer;
+}
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop p { margin: 4px 0; }
+
+.samples { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+.samples img {
+  width: 92px; height: 62px; object-fit: cover;
+  border-radius: 5px; border: 1px solid var(--line); cursor: pointer;
+}
+.samples img:hover { border-color: var(--accent); }
+
+/* --- layout --------------------------------------------------------- */
+
+.split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+.canvas-wrap { position: relative; line-height: 0; }
+.canvas-wrap img { width: 100%; border-radius: var(--radius); display: block; }
+#overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+#overlay polygon {
+  fill-opacity: .16; stroke-width: 2; stroke-opacity: .85;
+  transition: fill-opacity .12s;
+}
+#overlay polygon.active { fill-opacity: .42; stroke-width: 3; }
+#overlay polygon.off { fill-opacity: .02; stroke-opacity: .18; }
+
+.panel {
+  background: var(--accent-soft);
+  border: 1px solid #d6e5df;
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  margin-bottom: 14px;
+}
+.panel h3 { margin: 0 0 7px; font-size: 13px; }
+
+/* --- region list ---------------------------------------------------- */
+
+.region {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 9px; border-radius: 6px; cursor: default;
+  border: 1px solid transparent;
+}
+.region:hover { background: #f4f3f1; border-color: var(--line); }
+.swatch-dot { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+.region .name { font-weight: 500; text-transform: capitalize; }
+.region .note { color: var(--muted); font-size: 12px; }
+.region .conf { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* --- materials ------------------------------------------------------ */
+
+.mat-group { margin-bottom: 16px; }
+.mat-group > h4 {
+  margin: 0 0 8px; font-size: 13px; text-transform: capitalize;
+  display: flex; align-items: center; gap: 8px;
+}
+.mat-group .count { color: var(--muted); font-weight: 400; font-size: 12px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  display: flex; align-items: center; gap: 7px;
+  border: 1px solid var(--line); background: #fff;
+  border-radius: 20px; padding: 5px 12px 5px 6px;
+  cursor: pointer; font-size: 13px; transition: .12s;
+}
+.chip:hover { border-color: var(--accent); }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); font-weight: 500; }
+.chip .sw { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(0,0,0,.14); flex: none; }
+
+/* --- compare -------------------------------------------------------- */
+
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+@media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-grid figure { margin: 0; }
+.compare-grid img { width: 100%; border-radius: var(--radius); border: 1px solid var(--line); display: block; }
+.compare-grid figcaption {
+  margin-top: 5px; font-size: 11px; letter-spacing: .07em;
+  color: var(--muted); font-weight: 600;
+}
+
+/* --- tables --------------------------------------------------------- */
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+th, td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; }
+th { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 700; border-top: 2px solid var(--ink); border-bottom: none; font-size: 14px; }
+.rate-input {
+  width: 72px; padding: 3px 6px; font-size: 12px; text-align: right;
+  border: 1px solid var(--line); border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.rate-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+.headline {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 14px 16px; background: var(--accent-soft);
+  border-radius: var(--radius); margin-bottom: 14px; flex-wrap: wrap;
+}
+.headline .big { font-size: 26px; font-weight: 700; color: var(--accent); }
+.headline .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+details { margin-top: 14px; }
+summary { cursor: pointer; font-size: 13px; font-weight: 500; padding: 6px 0; }
+details ul { margin: 6px 0; padding-left: 20px; }
+details li { font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+
+/* --- buttons + messages --------------------------------------------- */
+
+.actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+button {
+  font: inherit; font-size: 14px; padding: 9px 17px;
+  border: 1px solid var(--line); background: #fff; color: var(--ink);
+  border-radius: 6px; cursor: pointer; transition: .12s;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
+button.primary:hover:not(:disabled) { background: #26493f; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.link {
+  background: none; border: none; color: var(--accent);
+  padding: 0; text-decoration: underline; font-size: inherit;
+}
+
+.msg { padding: 10px 13px; border-radius: 6px; margin-top: 12px; font-size: 13.5px; }
+.msg.err { background: var(--err-soft); color: var(--err); }
+.msg.warn { background: var(--warn-soft); color: var(--warn); }
+.msg.ok { background: var(--accent-soft); color: var(--accent); }
+.msg.busy { background: #f2f2f0; color: var(--muted); }
+.msg ul { margin: 6px 0 0; padding-left: 18px; }
+
+.muted { color: var(--muted); }
+.tiny { font-size: 12px; }
+
+.spinner {
+  display: inline-block; width: 12px; height: 12px; margin-right: 7px;
+  border: 2px solid currentColor; border-right-color: transparent;
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -1px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer { max-width: 1180px; margin: 0 auto; padding: 8px 24px 36px; }
+
+/* Rate editor: collapsed by default so stage 4 reads as a headline number
+   plus a download, with 5.7's rate editing one click away. */
+.rate-editor summary { color: var(--accent); }
+.rate-editor table { font-size: 12.5px; }
+.rate-editor td, .rate-editor th { padding: 5px 8px; }

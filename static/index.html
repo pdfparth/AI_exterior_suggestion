@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Exterior Renovation Estimator</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Exterior Renovation Estimator</h1>
+  <p class="sub">Upload a photo of a house &rarr; identify surfaces &rarr; choose materials &rarr; get a costed estimate</p>
+  <div id="health" class="health"></div>
+</header>
+
+<main>
+
+<!-- Stage 1 ------------------------------------------------------------- -->
+<section class="stage" id="stage-upload">
+  <div class="stage-head"><span class="num">1</span><h2>Upload a photo</h2></div>
+
+  <div id="drop" class="drop">
+    <input type="file" id="file" accept="image/jpeg,image/png,image/webp" hidden>
+    <p><strong>Drop a house exterior photo here</strong></p>
+    <p class="muted">or <button class="link" id="browse">browse</button> &middot; JPEG, PNG or WebP, up to 12MB</p>
+  </div>
+
+  <div id="samples" class="samples"></div>
+  <div id="upload-status"></div>
+</section>
+
+<!-- Stage 2 ------------------------------------------------------------- -->
+<section class="stage hidden" id="stage-analyse">
+  <div class="stage-head"><span class="num">2</span><h2>Detected surfaces</h2></div>
+
+  <div class="split">
+    <div>
+      <div class="canvas-wrap">
+        <img id="orig-img" alt="uploaded house">
+        <svg id="overlay" preserveAspectRatio="none"></svg>
+      </div>
+      <p class="muted tiny">Hover a row to highlight it on the photo. Untick a surface to exclude it from the estimate.</p>
+    </div>
+
+    <div>
+      <div id="scale-box" class="panel"></div>
+      <div id="region-list"></div>
+      <div id="analyse-warnings"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 3 ------------------------------------------------------------- -->
+<section class="stage hidden" id="stage-design">
+  <div class="stage-head"><span class="num">3</span><h2>Choose materials</h2></div>
+  <div id="material-picker"></div>
+  <div class="actions">
+    <button id="btn-render" class="primary">Generate redesign</button>
+    <label class="tiny"><input type="radio" name="engine" value="auto" checked> Auto</label>
+    <label class="tiny"><input type="radio" name="engine" value="gemini"> Gemini only</label>
+    <label class="tiny"><input type="radio" name="engine" value="local"> Local only</label>
+  </div>
+  <p class="muted tiny" style="margin:6px 0 0">
+    <strong>Auto</strong> tries Gemini for a photorealistic result and composites
+    locally if the API is rate-limited. <strong>Local</strong> is instant, free and
+    deterministic, but reads as a recolour rather than a photograph.
+  </p>
+  <div id="render-status"></div>
+
+  <div id="compare" class="hidden">
+    <div class="compare-grid">
+      <figure><img id="cmp-before" alt="original"><figcaption>ORIGINAL</figcaption></figure>
+      <figure><img id="cmp-after" alt="redesigned"><figcaption id="cmp-caption">REDESIGNED</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 4 ------------------------------------------------------------- -->
+<section class="stage hidden" id="stage-estimate">
+  <div class="stage-head"><span class="num">4</span><h2>Cost estimate</h2></div>
+  <div id="estimate-out"></div>
+  <div class="actions">
+    <button id="btn-report">Download PDF report</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p class="muted tiny">
+    Advisory estimate generated from a single photograph. Areas cover only what is
+    visible in that photo. Not a substitute for a site measurement.
+  </p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

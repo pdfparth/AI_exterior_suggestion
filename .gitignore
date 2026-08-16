@@ -1,0 +1,8 @@
+.env
+venv/
+__pycache__/
+*.pyc
+out_test_report.pdf
+
+# Archived first-approach pipeline; the model weights alone are ~490MB.
+_old_local_pipeline/weights/
