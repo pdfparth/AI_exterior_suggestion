@@ -446,4 +446,17 @@ async def index():
     return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 
+# --- v2 front end -----------------------------------------------------------
+# A second, independent UI over the same API. Mounted alongside v1 rather than
+# replacing it so both can be demoed and compared; nothing in `static/` changes.
+
+STATIC_V2_DIR = os.path.join(os.path.dirname(HERE), "static_v2")
+
+
+@app.get("/v2")
+async def index_v2():
+    return FileResponse(os.path.join(STATIC_V2_DIR, "index.html"))
+
+
+app.mount("/v2/static", StaticFiles(directory=STATIC_V2_DIR), name="static_v2")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

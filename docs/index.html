@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Exterior Renovation Estimator — UI Walkthroughs</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b23; --line:#252c38;
+    --ink:#eef2f8; --ink-2:#aab4c6; --ink-3:#7b879e; --ink-4:#58637a;
+    --teal:#2dd4a7; --green:#2f5d50;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;align-items:center;justify-content:center;padding:40px 24px;
+  }
+  body::before{
+    content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;
+    background:radial-gradient(44% 38% at 20% 14%,rgba(45,212,167,.09),transparent 62%),
+               radial-gradient(40% 42% at 82% 80%,rgba(90,169,255,.06),transparent 60%);
+  }
+  .wrap{max-width:1000px;width:100%}
+  h1{margin:0 0 10px;font-size:32px;letter-spacing:-.03em}
+  .lede{color:var(--ink-3);max-width:66ch;margin-bottom:8px}
+  .note{
+    color:var(--ink-4);font-size:13.5px;max-width:66ch;margin-bottom:34px;
+    padding-top:14px;border-top:1px solid var(--line);margin-top:22px;
+  }
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  a.card{
+    display:block;text-decoration:none;color:inherit;
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:18px;padding:26px;transition:.18s cubic-bezier(.22,.61,.36,1);
+  }
+  a.card:hover{transform:translateY(-4px);border-color:#39445a;box-shadow:0 18px 46px rgba(0,0,0,.42)}
+  .tag{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px;
+  }
+  .tag.v1{background:rgba(47,93,80,.24);color:#7fc3ad;border:1px solid rgba(47,93,80,.5)}
+  .tag.v2{background:rgba(45,212,167,.12);color:var(--teal);border:1px solid rgba(45,212,167,.3)}
+  .card h2{margin:0 0 7px;font-size:20px;letter-spacing:-.02em}
+  .card p{margin:0 0 16px;color:var(--ink-3);font-size:13.8px;line-height:1.55}
+  .swatch{height:78px;border-radius:11px;margin-bottom:16px;border:1px solid var(--line)}
+  .swatch.v1{background:linear-gradient(120deg,#faf9f7 0%,#eaf2ef 55%,#2f5d50 55%,#2f5d50 100%)}
+  .swatch.v2{background:linear-gradient(120deg,#0b0e13 0%,#1b2130 52%,#2dd4a7 52%,#f5b544 100%)}
+  ul{margin:0;padding-left:17px;color:var(--ink-4);font-size:12.8px}
+  li{margin-bottom:3px}
+  .go{margin-top:16px;font-size:13px;font-weight:600;color:var(--teal)}
+  .card.v1 .go{color:#7fc3ad}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI Exterior Renovation Estimator</h1>
+  <p class="lede">
+    Two interfaces over the same backend. Both walkthroughs were captured from
+    the running application, so they show real layout, real arithmetic and a
+    real composited redesign.
+  </p>
+
+  <div class="cards">
+    <a class="card v1" href="v1-demo.html">
+      <div class="swatch v1"></div>
+      <span class="tag v1">Version 1</span>
+      <h2>Original interface</h2>
+      <p>Light, plain and minimal. Four numbered stages down a single page.</p>
+      <ul>
+        <li>20 screens</li>
+        <li>Side-by-side before / after</li>
+        <li>Desktop, tablet and phone</li>
+      </ul>
+      <div class="go">View walkthrough →</div>
+    </a>
+
+    <a class="card v2" href="v2-demo.html">
+      <div class="swatch v2"></div>
+      <span class="tag v2">Version 2</span>
+      <h2>Renovation Studio</h2>
+      <p>Dark product UI with a progress rail, animated surface reveal and a
+         drag-to-compare slider.</p>
+      <ul>
+        <li>23 screens</li>
+        <li>Drag-to-compare with reveal animation</li>
+        <li>Desktop, tablet and phone</li>
+      </ul>
+      <div class="go">View walkthrough →</div>
+    </a>
+  </div>
+
+  <p class="note">
+    Both were captured with the Gemini calls mocked, so they run without an API
+    key. The redesigned images come from the local compositor, which is the
+    app's real fallback when image generation is rate-limited.
+  </p>
+</div>
+</body>
+</html>

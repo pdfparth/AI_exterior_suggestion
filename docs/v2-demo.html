@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renovation Studio v2 — UI Walkthrough</title>
+<style>
+  :root {
+    --bg:#0b0e13; --surface:#151a24; --surface-2:#1b2130; --line:#232a38;
+    --ink:#eef2f8; --ink-2:#b3bdd0; --ink-3:#7b879e; --ink-4:#58637a;
+    --brand:#2dd4a7; --gold:#f5b544; --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;
+    background:radial-gradient(46% 38% at 18% 12%,rgba(45,212,167,.08),transparent 62%),
+               radial-gradient(42% 44% at 84% 78%,rgba(90,169,255,.06),transparent 60%);
+  }
+  header{
+    padding:52px 32px 30px;border-bottom:1px solid var(--line);
+    max-width:1280px;margin:0 auto;
+  }
+  h1{margin:0 0 8px;font-size:31px;letter-spacing:-.03em}
+  .lede{color:var(--ink-3);font-size:15.5px;max-width:70ch}
+  .badges{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+  .badge{
+    font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:100px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--ink-3);
+  }
+  .badge.on{color:var(--brand);border-color:rgba(45,212,167,.3);background:rgba(45,212,167,.1)}
+
+  main{max-width:1280px;margin:0 auto;padding:36px 32px 90px}
+  section{margin-bottom:56px;scroll-margin-top:20px}
+  .num{
+    display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;
+    background:var(--brand);color:#04140f;font-size:12px;font-weight:800;margin-right:11px;
+  }
+  h2{margin:0 0 6px;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center}
+  .cap{color:var(--ink-3);font-size:14px;margin:0 0 16px 37px;max-width:78ch}
+  figure{margin:0}
+  img{
+    width:100%;display:block;border-radius:var(--r);
+    border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.5);
+    cursor:zoom-in;background:var(--surface);
+  }
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:880px){.row{grid-template-columns:1fr}}
+  .thin{max-width:430px}
+  .sub{font-size:12px;color:var(--ink-4);margin-top:8px;text-align:center}
+
+  nav{
+    position:sticky;top:0;z-index:20;background:rgba(11,14,19,.88);
+    backdrop-filter:blur(16px);border-bottom:1px solid var(--line);
+    padding:11px 32px;display:flex;gap:7px;overflow-x:auto;
+  }
+  nav a{
+    color:var(--ink-3);text-decoration:none;font-size:12.5px;font-weight:550;
+    padding:6px 12px;border-radius:100px;white-space:nowrap;transition:.14s;
+  }
+  nav a:hover{background:var(--surface-2);color:var(--ink)}
+
+  /* lightbox */
+  #lb{
+    position:fixed;inset:0;z-index:100;background:rgba(4,6,10,.96);
+    display:none;place-items:center;padding:26px;cursor:zoom-out;
+  }
+  #lb.on{display:grid}
+  #lb img{max-width:100%;max-height:94vh;width:auto;object-fit:contain;box-shadow:none;cursor:zoom-out}
+  footer{border-top:1px solid var(--line);padding:26px 32px 60px;max-width:1280px;margin:0 auto;color:var(--ink-4);font-size:13px}
+  code{background:var(--surface-2);padding:2px 6px;border-radius:5px;font-size:12.5px;color:var(--ink-2)}
+  .switch{
+    display:inline-block;margin-top:16px;font-size:13px;color:var(--brand);
+    text-decoration:none;font-weight:600;padding:8px 15px;border-radius:8px;
+    border:1px solid rgba(45,212,167,.3);background:rgba(45,212,167,.1);
+  }
+  .switch:hover{background:rgba(45,212,167,.18)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Renovation Studio — v2 UI</h1>
+  <p class="lede">
+    A complete walkthrough of the redesigned interface, captured end to end from
+    the running application. Every Gemini call was replaced with a canned
+    response so the flow runs without an API key — but the layout, animation,
+    arithmetic and the redesigned image are all produced by the real app.
+  </p>
+  <div class="badges">
+    <span class="badge on">23 screens</span>
+    <span class="badge">Desktop · Tablet · Phone</span>
+    <span class="badge">Zero JS errors</span>
+    <span class="badge">Click any image to enlarge</span>
+  </div>
+  <div><a class="switch" href="v1-demo.html">← See the v1 interface</a></div>
+</header>
+
+<nav>
+  <a href="#s1">Upload</a>
+  <a href="#s2">Survey</a>
+  <a href="#s3">Scale</a>
+  <a href="#s4">Materials</a>
+  <a href="#s5">Rendering</a>
+  <a href="#s6">Compare</a>
+  <a href="#s7">Estimate</a>
+  <a href="#s8">Rates</a>
+  <a href="#s9">Editing</a>
+  <a href="#s10">Errors</a>
+  <a href="#s11">Responsive</a>
+  <a href="#s12">Full page</a>
+</nav>
+
+<main>
+
+<section id="s1">
+  <h2><span class="num">1</span>Upload</h2>
+  <p class="cap">
+    Dark product shell: sticky top bar with a live model chip, a five-step rail
+    on the left, and the working area on the right. The dropzone lifts and
+    glows on hover; a light sweep animates across it while a file is over it.
+  </p>
+  <div class="row">
+    <figure><img src="v2-screens/01_landing.jpg" alt="Landing"><div class="sub">Initial state</div></figure>
+    <figure><img src="v2-screens/02_dropzone_hover.jpg" alt="Dropzone hover"><div class="sub">Dropzone on hover</div></figure>
+  </div>
+</section>
+
+<section id="s2">
+  <h2><span class="num">2</span>Survey</h2>
+  <p class="cap">
+    While the quality gate runs, a spinner and indeterminate bar report what is
+    happening. Once the survey returns, each detected surface draws its outline
+    on with a staggered delay, then its fill fades in behind. Colour is shared
+    between the photo and the list, so a row and a shape are obviously the same
+    thing. Hovering either one highlights both.
+  </p>
+  <div class="row">
+    <figure><img src="v2-screens/03_uploading.jpg" alt="Uploading"><div class="sub">Quality gate running</div></figure>
+    <figure><img src="v2-screens/04_survey.jpg" alt="Survey"><div class="sub">10 surfaces identified</div></figure>
+  </div>
+  <figure style="margin-top:18px"><img src="v2-screens/05_region_hover.jpg" alt="Region hover">
+    <div class="sub">Hovering a row lifts it and intensifies the matching polygon</div></figure>
+</section>
+
+<section id="s3">
+  <h2><span class="num">3</span>Real-world scale</h2>
+  <p class="cap">
+    The number that multiplies every cost in the system, so it is surfaced
+    rather than buried: which reference object was used, its assumed size, the
+    model's confidence, and two editable dimensions. Changing either one
+    recalculates the whole estimate immediately.
+  </p>
+  <figure class="thin"><img src="v2-screens/06_scale_panel.jpg" alt="Scale panel"></figure>
+</section>
+
+<section id="s4">
+  <h2><span class="num">4</span>Material selection</h2>
+  <p class="cap">
+    Grouped by component, each option a swatch card with its rate. Cards lift on
+    hover; selecting one springs a checkmark in and rings the card in brand
+    colour. "Leave as is" excludes a component from both the render and the cost.
+  </p>
+  <figure><img src="v2-screens/07_materials.jpg" alt="Materials"><div class="sub">Catalog grouped per component</div></figure>
+  <div class="row" style="margin-top:18px">
+    <figure><img src="v2-screens/08_material_hover.jpg" alt="Material hover"><div class="sub">Card hover</div></figure>
+    <figure><img src="v2-screens/09_material_selected.jpg" alt="Material selected"><div class="sub">Selected state</div></figure>
+  </div>
+</section>
+
+<section id="s5">
+  <h2><span class="num">5</span>Rendering</h2>
+  <p class="cap">
+    The generate button shimmers while working and the status panel says which
+    engine is running. Auto tries Gemini first and composites locally if the API
+    is rate-limited — which is exactly what happened here, and the UI says so
+    plainly rather than passing the cheaper render off as the photorealistic one.
+  </p>
+  <figure><img src="v2-screens/10_rendering.jpg" alt="Rendering"><div class="sub">In progress</div></figure>
+</section>
+
+<section id="s6">
+  <h2><span class="num">6</span>Before / after comparison</h2>
+  <p class="cap">
+    A drag-to-compare slider. On load the "after" image wipes across from 0 to
+    100%, then eases back to the midpoint so the handle is obviously grabbable.
+    Draggable by pointer, nudges toward the cursor on hover, and arrow-key
+    accessible. Note the roofline and window edges lining up exactly across the
+    seam — the two images stay in register at any split.
+  </p>
+  <div class="row">
+    <figure><img src="v2-screens/11_compare_revealing.jpg" alt="Reveal"><div class="sub">Mid reveal animation</div></figure>
+    <figure><img src="v2-screens/12_compare_settled.jpg" alt="Settled"><div class="sub">Settled at 50%</div></figure>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <figure><img src="v2-screens/13_compare_mostly_after.jpg" alt="Dragged left"><div class="sub">Dragged left — mostly redesigned</div></figure>
+    <figure><img src="v2-screens/14_compare_mostly_before.jpg" alt="Dragged right"><div class="sub">Dragged right — mostly original</div></figure>
+  </div>
+</section>
+
+<section id="s7">
+  <h2><span class="num">7</span>Cost estimate</h2>
+  <p class="cap">
+    The total counts up rather than snapping, so a rate change is legible as
+    movement. A split bar shows the material/labour proportion. The rail on the
+    left mirrors the total throughout, so it stays visible while you scroll
+    through materials.
+  </p>
+  <figure><img src="v2-screens/15_estimate.jpg" alt="Estimate"><div class="sub">Headline total and split</div></figure>
+</section>
+
+<section id="s8">
+  <h2><span class="num">8</span>Rate adjustment</h2>
+  <p class="cap">
+    Requirement 5.7 — the user can change rates and see costs recalculate. Kept
+    as a collapsed panel so the estimate view stays clean; the full breakdown of
+    areas, quantities and wastage lives in the PDF report. Here a material rate
+    was changed from 145 to 980 and the total moved from ₹98,782 to ₹4,38,783.
+  </p>
+  <div class="row">
+    <figure><img src="v2-screens/16_rate_editor.jpg" alt="Rate editor"><div class="sub">Editor open</div></figure>
+    <figure><img src="v2-screens/17_rate_changed.jpg" alt="Rate changed"><div class="sub">After edit — total recalculated</div></figure>
+  </div>
+</section>
+
+<section id="s9">
+  <h2><span class="num">9</span>Excluding a surface</h2>
+  <p class="cap">
+    Clicking a row — or the shape on the photo itself — removes that surface from
+    the estimate. The polygon dims, the row greys out, the material picker drops
+    that component, and the cost recalculates. This is requirement 5.2's
+    "adjust or correct" in its simplest usable form.
+  </p>
+  <figure><img src="v2-screens/18_region_excluded.jpg" alt="Region excluded"><div class="sub">First wall excluded — note the dimmed polygon and lower total</div></figure>
+</section>
+
+<section id="s10">
+  <h2><span class="num">10</span>Error states</h2>
+  <p class="cap">
+    An unusable photo is rejected with a specific reason and practical guidance
+    on retaking it, rather than a generic failure. Toasts carry transient
+    messages; inline notes carry ones you need to keep reading.
+  </p>
+  <figure><img src="v2-screens/23_photo_rejected.jpg" alt="Rejected"><div class="sub">Quality gate rejection (5.1)</div></figure>
+</section>
+
+<section id="s11">
+  <h2><span class="num">11</span>Responsive</h2>
+  <p class="cap">
+    Below 1080px the rail moves above the content and the stepper becomes a
+    horizontal scroller. Below 620px the top bar sheds its subtitle, panels
+    tighten, and toasts span the width. No horizontal overflow at any width.
+  </p>
+  <figure><img src="v2-screens/20_tablet.jpg" alt="Tablet"><div class="sub">Tablet — 834px</div></figure>
+  <div class="row" style="margin-top:18px">
+    <figure><img src="v2-screens/21_phone_landing.jpg" alt="Phone landing"><div class="sub">Phone — 400px</div></figure>
+    <figure><img src="v2-screens/22_phone_survey.jpg" alt="Phone survey"><div class="sub">Phone — survey stage</div></figure>
+  </div>
+</section>
+
+<section id="s12">
+  <h2><span class="num">12</span>The whole flow</h2>
+  <p class="cap">
+    Every stage in one continuous page — upload, survey, materials, comparison
+    and estimate stay on screen together, so you can scroll back to change a
+    material and watch the total move without losing your place.
+  </p>
+  <figure><img src="v2-screens/19_full_page.jpg" alt="Full page"><div class="sub">Full-page capture</div></figure>
+</section>
+
+</main>
+
+<footer>
+  Captured from the running app with <code>app.vision</code> and
+  <code>app.redesign</code> mocked — no API key, no network. The redesigned
+  image is genuine output from the local compositor
+  (<code>app/composite.py</code>). Run the real thing with
+  <code>uvicorn app.main:app --port 8000</code> and open
+  <code>/v2</code>.
+</footer>
+
+<div id="lb"><img alt=""></div>
+<script>
+  const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('main img').forEach(i => {
+    i.onclick = () => { lbImg.src = i.src; lb.classList.add('on'); };
+  });
+  lb.onclick = () => lb.classList.remove('on');
+  addEventListener('keydown', e => e.key === 'Escape' && lb.classList.remove('on'));
+</script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exterior Renovation Estimator — v1 UI Walkthrough</title>
+<style>
+  /* Light theme, matching the v1 interface this documents. */
+  :root {
+    --bg:#faf9f7; --panel:#fff; --line:#e0dedb;
+    --ink:#1c1c1c; --ink-2:#4a4a4a; --ink-3:#6d6d6d; --ink-4:#8b8b8b;
+    --accent:#2f5d50; --accent-soft:#eaf2ef; --r:10px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{padding:48px 32px 28px;border-bottom:1px solid var(--line);max-width:1240px;margin:0 auto}
+  h1{margin:0 0 8px;font-size:29px;letter-spacing:-.025em}
+  .lede{color:var(--ink-3);font-size:15px;max-width:70ch}
+  .badges{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+  .badge{
+    font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:100px;
+    background:#f0efec;border:1px solid var(--line);color:var(--ink-3);
+  }
+  .badge.on{color:var(--accent);border-color:#c9ded6;background:var(--accent-soft)}
+  .switch{
+    display:inline-block;margin-top:16px;font-size:13px;color:var(--accent);
+    text-decoration:none;font-weight:600;padding:8px 15px;border-radius:8px;
+    border:1px solid #c9ded6;background:var(--accent-soft);
+  }
+  .switch:hover{background:#dfeae5}
+
+  main{max-width:1240px;margin:0 auto;padding:34px 32px 90px}
+  section{margin-bottom:52px;scroll-margin-top:20px}
+  .num{
+    display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;
+    background:var(--accent);color:#fff;font-size:12px;font-weight:700;margin-right:11px;
+  }
+  h2{margin:0 0 6px;font-size:18px;letter-spacing:-.02em;display:flex;align-items:center}
+  .cap{color:var(--ink-3);font-size:14px;margin:0 0 16px 36px;max-width:78ch}
+  figure{margin:0}
+  img{
+    width:100%;display:block;border-radius:var(--r);
+    border:1px solid var(--line);box-shadow:0 4px 18px rgba(0,0,0,.07);
+    cursor:zoom-in;background:#fff;
+  }
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:880px){.row{grid-template-columns:1fr}}
+  .thin{max-width:520px}
+  .sub{font-size:12px;color:var(--ink-4);margin-top:8px;text-align:center}
+
+  nav{
+    position:sticky;top:0;z-index:20;background:rgba(250,249,247,.93);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+    padding:11px 32px;display:flex;gap:6px;overflow-x:auto;
+  }
+  nav a{
+    color:var(--ink-3);text-decoration:none;font-size:12.5px;font-weight:550;
+    padding:6px 12px;border-radius:100px;white-space:nowrap;transition:.14s;
+  }
+  nav a:hover{background:#efedea;color:var(--ink)}
+
+  #lb{position:fixed;inset:0;z-index:100;background:rgba(20,20,20,.94);display:none;place-items:center;padding:26px;cursor:zoom-out}
+  #lb.on{display:grid}
+  #lb img{max-width:100%;max-height:94vh;width:auto;object-fit:contain;box-shadow:none;cursor:zoom-out;border:none}
+  footer{border-top:1px solid var(--line);padding:26px 32px 60px;max-width:1240px;margin:0 auto;color:var(--ink-4);font-size:13px}
+  code{background:#f0efec;padding:2px 6px;border-radius:5px;font-size:12.5px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Exterior Renovation Estimator — v1 UI</h1>
+  <p class="lede">
+    The original interface: plain, light, and deliberately minimal. Captured end
+    to end from the running application with every Gemini call replaced by a
+    canned response, so the flow runs without an API key — the layout,
+    arithmetic and the redesigned image are all produced by the real app.
+  </p>
+  <div class="badges">
+    <span class="badge on">20 screens</span>
+    <span class="badge">Desktop · Tablet · Phone</span>
+    <span class="badge">Zero JS errors</span>
+    <span class="badge">Click any image to enlarge</span>
+  </div>
+  <div><a class="switch" href="v2-demo.html">See the v2 interface →</a></div>
+</header>
+
+<nav>
+  <a href="#s1">Upload</a>
+  <a href="#s2">Surfaces</a>
+  <a href="#s3">Scale</a>
+  <a href="#s4">Materials</a>
+  <a href="#s5">Redesign</a>
+  <a href="#s6">Estimate</a>
+  <a href="#s7">Rates</a>
+  <a href="#s8">Editing</a>
+  <a href="#s9">Errors</a>
+  <a href="#s10">Responsive</a>
+  <a href="#s11">Full page</a>
+</nav>
+
+<main>
+
+<section id="s1">
+  <h2><span class="num">1</span>Upload</h2>
+  <p class="cap">
+    Four numbered stages down one page. The dropzone accepts a drag or a click,
+    and two sample photos are offered so the flow can be demonstrated without
+    hunting for a file. A status line reports the quality gate as it runs.
+  </p>
+  <div class="row">
+    <figure><img src="v1-screens/01_landing.jpg" alt="Landing"><div class="sub">Initial state</div></figure>
+    <figure><img src="v1-screens/02_uploading.jpg" alt="Uploading"><div class="sub">Quality gate running</div></figure>
+  </div>
+</section>
+
+<section id="s2">
+  <h2><span class="num">2</span>Detected surfaces</h2>
+  <p class="cap">
+    The photo is overlaid with one coloured polygon per detected surface, beside
+    a checklist carrying each surface's confidence. Colour links a row to its
+    shape; hovering a row highlights the polygon. Unticking a row excludes that
+    surface from the estimate.
+  </p>
+  <div class="row">
+    <figure><img src="v1-screens/03_analysing.jpg" alt="Analysing"><div class="sub">Survey in progress</div></figure>
+    <figure><img src="v1-screens/04_surfaces.jpg" alt="Surfaces"><div class="sub">10 surfaces identified</div></figure>
+  </div>
+  <figure style="margin-top:18px"><img src="v1-screens/05_overlay.jpg" alt="Overlay close-up">
+    <div class="sub">Overlay close-up — walls, parapet, windows, door, pillar, railing and steps</div></figure>
+</section>
+
+<section id="s3">
+  <h2><span class="num">3</span>Real-world scale and surface list</h2>
+  <p class="cap">
+    The scale panel states which reference object was used, its assumed size and
+    the model's confidence, then exposes the two facade dimensions as editable
+    fields. These multiply every cost in the system, so they are shown rather
+    than buried. Warnings that affect accuracy sit directly below the list.
+  </p>
+  <figure><img src="v1-screens/06_scale_regions.jpg" alt="Scale and regions"></figure>
+</section>
+
+<section id="s4">
+  <h2><span class="num">4</span>Material selection</h2>
+  <p class="cap">
+    Materials are grouped by component, each a labelled chip with a colour
+    swatch. Selecting one applies it to every surface of that component and
+    recalculates the estimate immediately. "Leave as is" drops the component
+    from both the render and the cost.
+  </p>
+  <figure><img src="v1-screens/07_materials.jpg" alt="Materials"><div class="sub">Catalog grouped per component</div></figure>
+  <figure style="margin-top:18px"><img src="v1-screens/08_material_chips.jpg" alt="Material chips">
+    <div class="sub">Chips close-up — the selected option is ringed and filled</div></figure>
+</section>
+
+<section id="s5">
+  <h2><span class="num">5</span>Redesign and comparison</h2>
+  <p class="cap">
+    A plain side-by-side, original on the left and redesign on the right. Here
+    Gemini was rate-limited, so the app fell back to the local compositor and
+    said so — note that the windows stay untouched while the walls take the sand
+    texture, and the original lighting survives the repaint.
+  </p>
+  <div class="row">
+    <figure><img src="v1-screens/09_rendering.jpg" alt="Rendering"><div class="sub">Generating</div></figure>
+    <figure><img src="v1-screens/10_before_after.jpg" alt="Before after"><div class="sub">Result, with the fallback notice</div></figure>
+  </div>
+  <figure style="margin-top:18px"><img src="v1-screens/11_compare_closeup.jpg" alt="Comparison close-up">
+    <div class="sub">Side-by-side close-up — original (left) and redesigned (right)</div></figure>
+</section>
+
+<section id="s6">
+  <h2><span class="num">6</span>Cost estimate</h2>
+  <p class="cap">
+    Headline totals only — grand total, material and labour. The per-line areas,
+    quantities, wastage and assumptions deliberately live in the PDF report
+    rather than on screen, so this view stays readable and the document that
+    reaches a contractor carries the full working.
+  </p>
+  <figure><img src="v1-screens/12_estimate.jpg" alt="Estimate"></figure>
+</section>
+
+<section id="s7">
+  <h2><span class="num">7</span>Rate adjustment</h2>
+  <p class="cap">
+    Requirement 5.7 — rates are editable and costs recalculate. Collapsed by
+    default to keep the estimate clean. Here one material rate was raised and
+    the total moved from Rs 40,770 to Rs 3,97,777.
+  </p>
+  <div class="row">
+    <figure><img src="v1-screens/13_rate_editor.jpg" alt="Rate editor"><div class="sub">Editor open</div></figure>
+    <figure><img src="v1-screens/14_rate_changed.jpg" alt="Rate changed"><div class="sub">After the edit</div></figure>
+  </div>
+</section>
+
+<section id="s8">
+  <h2><span class="num">8</span>Excluding a surface</h2>
+  <p class="cap">
+    Unticking a surface removes it from the estimate: the polygon dims, the
+    material picker drops that component, and the total recalculates. This is
+    requirement 5.2's "review and adjust" in its simplest usable form.
+  </p>
+  <figure><img src="v1-screens/15_surface_excluded.jpg" alt="Surface excluded"><div class="sub">First wall excluded</div></figure>
+</section>
+
+<section id="s9">
+  <h2><span class="num">9</span>Error states</h2>
+  <p class="cap">
+    An unusable photo is rejected before anything is estimated from it, with a
+    specific reason and practical advice on retaking it — requirement 5.1 asks
+    for exactly this rather than a generic failure.
+  </p>
+  <figure><img src="v1-screens/20_photo_rejected.jpg" alt="Rejected"><div class="sub">Quality gate rejection</div></figure>
+</section>
+
+<section id="s10">
+  <h2><span class="num">10</span>Responsive</h2>
+  <p class="cap">
+    The two-column viewer collapses to a single column below 900px, and the
+    comparison grid stacks below 700px. Everything remains usable on a phone.
+  </p>
+  <figure><img src="v1-screens/17_tablet.jpg" alt="Tablet"><div class="sub">Tablet — 834px</div></figure>
+  <div class="row" style="margin-top:18px">
+    <figure><img src="v1-screens/18_phone_landing.jpg" alt="Phone landing"><div class="sub">Phone — 400px</div></figure>
+    <figure><img src="v1-screens/19_phone_surfaces.jpg" alt="Phone surfaces"><div class="sub">Phone — surfaces stage</div></figure>
+  </div>
+</section>
+
+<section id="s11">
+  <h2><span class="num">11</span>The whole flow</h2>
+  <p class="cap">
+    All four stages on one continuous page, so you can scroll back to change a
+    material and watch the total move without losing your place.
+  </p>
+  <figure><img src="v1-screens/16_full_page.jpg" alt="Full page"><div class="sub">Full-page capture</div></figure>
+</section>
+
+</main>
+
+<footer>
+  Captured from the running app with <code>app.vision</code> and
+  <code>app.redesign</code> mocked — no API key, no network. The redesigned
+  image is genuine output from the local compositor
+  (<code>app/composite.py</code>). Run the real thing with
+  <code>uvicorn app.main:app --port 8000</code> and open <code>/</code>.
+  Regenerate these shots with <code>python demo_capture_v1.py</code>.
+</footer>
+
+<div id="lb"><img alt=""></div>
+<script>
+  const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('main img').forEach(i => {
+    i.onclick = () => { lbImg.src = i.src; lb.classList.add('on'); };
+  });
+  lb.onclick = () => lb.classList.remove('on');
+  addEventListener('keydown', e => e.key === 'Escape' && lb.classList.remove('on'));
+</script>
+</body>
+</html>

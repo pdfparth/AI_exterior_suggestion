@@ -227,15 +227,47 @@ deduction, paint/tile/railing quantity rules, rate overrides, the local
 compositor and the PDF. This exercises everything except the Gemini calls, so
 it passes even with no key and no network.
 
+### See both UIs without running anything
+
+`docs/index.html` links two screenshot walkthroughs — 43 screens captured from
+the running app. Open it in any browser: no server, no API key, no network.
+Useful as a fallback when demoing somewhere the app cannot run.
+
+```bash
+xdg-open docs/index.html        # macOS: open docs/index.html
+```
+
+| Page | Contents |
+|---|---|
+| `docs/index.html` | Landing page linking both walkthroughs |
+| `docs/v1-demo.html` | v1 interface — 20 screens |
+| `docs/v2-demo.html` | v2 interface — 23 screens |
+
+Regenerate after UI changes with `python demo_capture_v1.py` and
+`python demo_capture.py` (both need
+`pip install playwright && playwright install chromium`).
+
+### Two front ends
+
+Both run off the same API and the same server process:
+
+| URL | UI |
+|---|---|
+| `http://localhost:8000/` | **v1** — plain, minimal, light |
+| `http://localhost:8000/v2` | **v2** — dark product UI, stepper, drag-to-compare slider |
+
+v2 lives in `static_v2/` and adds nothing to the backend beyond one route and
+one static mount. Use whichever suits the audience; v1 is untouched.
+
 ### 5. Run the server
 
 ```bash
 ./venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
-Open **http://localhost:8000**.
+Open **http://localhost:8000** (v1) or **http://localhost:8000/v2** (v2).
 
-The header should read *"Gemini connected"*. If it shows a red key warning, the
+The header should show the connected model name. If it shows a red key warning, the
 `.env` file was not picked up — confirm it sits next to `README.md` and restart.
 
 ### 6. Walk through it
@@ -294,7 +326,11 @@ app/
   schemas.py    pydantic contracts, double as Gemini's response schema
   report.py     PDF generation
   store.py      in-memory project store
-static/         single-page frontend, no build step
+static/         v1 frontend — plain and minimal
+static_v2/      v2 frontend — dark product UI, no build step
+docs/           offline screenshot walkthroughs of both UIs (open index.html)
+demo_capture.py     drives v2 with Gemini mocked, to regenerate those shots
+demo_capture_v1.py  the same for v1
 test_offline.py 22 checks: estimation chain, compositor, model fallback
 _old_local_pipeline/  first approach (OneFormer/DINO/SAM), kept for comparison
 ```
