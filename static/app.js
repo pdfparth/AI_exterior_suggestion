@@ -446,8 +446,13 @@ fetch('/api/samples').then((r) => r.json()).then((list) => {
     img.title = name;
     img.onclick = async (ev) => {
       ev.stopPropagation();
-      const blob = await (await fetch(`/api/samples/${name}`)).blob();
-      upload(new File([blob], name, { type: blob.type }));
+      const res = await fetch(`/api/samples/${name}`);
+      const blob = await res.blob();
+      let type = blob.type;
+      if (!type || type === 'application/octet-stream') {
+        type = name.endsWith('.webp') ? 'image/webp' : (name.endsWith('.png') ? 'image/png' : 'image/jpeg');
+      }
+      upload(new File([blob], name, { type }));
     };
     host.appendChild(img);
   });

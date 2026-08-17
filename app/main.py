@@ -16,9 +16,12 @@ into one endpoint would remove exactly the interaction the requirements ask for.
 from __future__ import annotations
 
 import io
+import mimetypes
 import os
 import re
 import traceback
+
+mimetypes.add_type("image/webp", ".webp")
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile
@@ -138,13 +141,32 @@ async def create_project(file: UploadFile):
         raise HTTPException(413, f"file larger than {MAX_UPLOAD_MB}MB")
 
     mime = file.content_type or "image/jpeg"
-    if mime not in ALLOWED_MIME:
-        raise HTTPException(415, f"unsupported type {mime}; use JPEG, PNG or WebP")
+    if mime not in ALLOWED_MIME or mime == "application/octet-stream":
+        ext = os.path.splitext(file.filename or "")[1].lower()
+        if ext in (".jpg", ".jpeg"):
+            mime = "image/jpeg"
+        elif ext == ".png":
+            mime = "image/png"
+        elif ext == ".webp":
+            mime = "image/webp"
 
     try:
         w, h = _image_size(data)
+        if mime not in ALLOWED_MIME or mime == "application/octet-stream":
+            from PIL import Image
+            with Image.open(io.BytesIO(data)) as im:
+                fmt = (im.format or "").upper()
+                if fmt == "JPEG":
+                    mime = "image/jpeg"
+                elif fmt == "PNG":
+                    mime = "image/png"
+                elif fmt == "WEBP":
+                    mime = "image/webp"
     except Exception:
         raise HTTPException(400, "could not decode that file as an image")
+
+    if mime not in ALLOWED_MIME:
+        raise HTTPException(415, f"unsupported type {mime}; use JPEG, PNG or WebP")
 
     small, small_mime = _downscale(data, mime)
 
@@ -425,7 +447,15 @@ async def get_sample(name: str):
     path = os.path.join(SAMPLES_DIR, safe)
     if not os.path.isfile(path) or not safe.lower().endswith(SAMPLE_EXT):
         raise HTTPException(404, "no such sample")
-    return FileResponse(path)
+    media_type, _ = mimetypes.guess_type(path)
+    if not media_type or media_type == "application/octet-stream":
+        if safe.lower().endswith(".webp"):
+            media_type = "image/webp"
+        elif safe.lower().endswith(".png"):
+            media_type = "image/png"
+        else:
+            media_type = "image/jpeg"
+    return FileResponse(path, media_type=media_type)
 
 
 @app.get("/api/health")
